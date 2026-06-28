@@ -1,0 +1,102 @@
+html, body {
+  direction: rtl;
+}
+
+body {
+  margin: 0;
+  font-family: 'Noto Sans Hebrew', 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: #f8f6ff;
+}
+
+/* ─── Stat Cards ─────────────────────────────────────── */
+.stat-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+.stat-card:hover {
+  transform: translateY(-3px) !important;
+}
+.stat-card-rose {
+  border-right: 3px solid #f43f5e !important;
+  box-shadow: 0 2px 12px rgba(244, 63, 94, 0.08) !important;
+}
+.stat-card-rose:hover {
+  box-shadow: 0 8px 24px rgba(244, 63, 94, 0.14) !important;
+}
+.stat-card-green {
+  border-right: 3px solid #10b981 !important;
+  box-shadow: 0 2px 12px rgba(16, 185, 129, 0.08) !important;
+}
+.stat-card-green:hover {
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.14) !important;
+}
+.stat-card-violet {
+  border-right: 3px solid #8b5cf6 !important;
+  box-shadow: 0 2px 12px rgba(139, 92, 246, 0.08) !important;
+}
+.stat-card-violet:hover {
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.14) !important;
+}
+
+/* ─── Schedule Card ──────────────────────────────────── */
+.schedule-card {
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid rgba(139, 92, 246, 0.1) !important;
+}
+
+/* ─── Sidebar Menu ───────────────────────────────────── */
+.eden-menu.ant-menu {
+  background: transparent !important;
+  border: none !important;
+}
+.eden-menu .ant-menu-item {
+  border-radius: 8px !important;
+  margin: 1px 10px !important;
+  width: calc(100% - 20px) !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+  font-weight: 400 !important;
+  transition: all 0.18s ease !important;
+}
+.eden-menu .ant-menu-item:hover {
+  background: rgba(255, 255, 255, 0.07) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+.eden-menu .ant-menu-item-selected {
+  background: rgba(139, 92, 246, 0.22) !important;
+  color: #fff !important;
+}
+.eden-menu .ant-menu-item-selected::after {
+  display: none !important;
+}
+
+/* ─── Calendar Month Dots ────────────────────────────── */
+.cal-count {
+  width: 16px;
+  height: 16px;
+  background: #8b5cf6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 600;
+  margin: 2px auto 0;
+  line-height: 1;
+}
+.ant-picker-calendar .ant-picker-cell-selected .ant-picker-cell-inner {
+  background: #8b5cf6 !important;
+  border-radius: 6px !important;
+}
+.ant-picker-calendar .ant-picker-cell-selected .cal-count {
+  background: rgba(255, 255, 255, 0.9);
+  color: #8b5cf6;
+}
+.ant-picker-calendar .ant-picker-cell-today .ant-picker-cell-inner::before {
+  border-color: #8b5cf6 !important;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.2); border-radius: 4px; }
