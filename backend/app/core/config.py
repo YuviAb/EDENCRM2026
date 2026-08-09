@@ -30,6 +30,16 @@ class Settings(BaseSettings):
     CLINIC_OWNER_WHATSAPP_NUMBER: str = ""
     DAILY_REMINDER_HOUR: int = 6
 
+    # Intake
+    INTAKE_SECRET: str = ""
+
+    # Auth / JWT
+    ADMIN_USERNAME: str = "admin"
+    ADMIN_PASSWORD_HASH: str = ""  # צור עם: python generate_password.py
+    JWT_SECRET_KEY: str = ""
+    JWT_ALGORITHM: str = "HS256"
+    JWT_EXPIRE_HOURS: int = 8
+
     @property
     def cors_origins_list(self) -> list[str]:
         return [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]

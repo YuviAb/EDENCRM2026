@@ -156,14 +156,14 @@ export default function PaymentsPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-        <Title level={3} style={{ margin: 0 }}>תשלומים</Title>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+        <Title level={4} style={{ margin: 0 }}>תשלומים</Title>
         <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
           רשום תשלום
         </Button>
       </div>
 
-      <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
         <Select
           allowClear
           placeholder="סינון לפי לקוחה"
@@ -188,6 +188,7 @@ export default function PaymentsPage() {
         loading={isLoading}
         pagination={{ pageSize: 25, showTotal: (t) => `סה"כ ${t} תשלומים` }}
         locale={{ emptyText: 'אין תשלומים רשומים' }}
+        scroll={{ x: 'max-content' }}
       />
 
       <Modal
@@ -198,7 +199,7 @@ export default function PaymentsPage() {
         okText="שמור תשלום"
         cancelText="ביטול"
         confirmLoading={saving}
-        width={480}
+        width="min(480px, 95vw)"
         destroyOnClose
       >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>

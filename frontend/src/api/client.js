@@ -7,10 +7,24 @@ export const apiClient = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
 
-// מחלץ הודעת שגיאה ברורה מהפורמט האחיד של הבקבנד
+// ── בקשות יוצאות: מצרף את ה-JWT token ───────────────────────
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('eden_token')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
+
+// ── תגובות נכנסות: מחלץ שגיאה + מטפל ב-401 ─────────────────
 apiClient.interceptors.response.use(
   (res) => res,
   (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('eden_token')
+      window.location.href = '/login'
+      return Promise.reject(error)
+    }
     const data = error.response?.data
     if (data?.detail && typeof data.detail === 'string') {
       error.message = data.detail

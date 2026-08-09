@@ -4,14 +4,15 @@
 """
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from postgrest.exceptions import APIError as PostgrestAPIError
 
 from app.core.config import settings
-from app.api import clients, appointments, payments, photos, dashboard, notifications
+from app.core.deps import require_admin
+from app.api import clients, appointments, payments, photos, dashboard, notifications, auth, intake
 
 
 # ── Scheduler (APScheduler) ──────────────────────────────────────────
@@ -29,10 +30,10 @@ def _start_scheduler():
             replace_existing=True,
         )
         scheduler.start()
-        print(f"[Scheduler] תזכורת יומית תשלח בכל יום בשעה {settings.DAILY_REMINDER_HOUR}:00 (Asia/Jerusalem)")
+        print(f"[Scheduler] Daily reminder scheduled at {settings.DAILY_REMINDER_HOUR}:00 (Asia/Jerusalem)")
         return scheduler
     except Exception as exc:
-        print(f"[Scheduler] שגיאה בהפעלת ה-scheduler: {exc}")
+        print(f"[Scheduler] Failed to start: {exc}")
         return None
 
 
@@ -42,15 +43,17 @@ async def lifespan(app: FastAPI):
     yield
     if scheduler and scheduler.running:
         scheduler.shutdown(wait=False)
-        print("[Scheduler] נסגר בצורה מסודרת")
 
 
 # ── App ──────────────────────────────────────────────────────────────
 app = FastAPI(
     title=settings.APP_NAME,
-    description="מערכת ניהול לקוחות למרפאת טיפולי פנים - ניהול לקוחות, יומן תורים, תשלומים ותמונות.",
+    description="מערכת ניהול לקוחות למרפאת טיפולי פנים.",
     version="0.1.0",
     lifespan=lifespan,
+    # הסתרת /docs ו-/openapi.json בפרודקשן
+    docs_url="/docs" if settings.ENVIRONMENT != "production" else None,
+    redoc_url=None,
 )
 
 app.add_middleware(
@@ -60,6 +63,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# ── Security headers middleware ───────────────────────────────────────
+@app.middleware("http")
+async def security_headers_middleware(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"]  = "nosniff"
+    response.headers["X-Frame-Options"]          = "DENY"
+    response.headers["X-XSS-Protection"]         = "1; mode=block"
+    response.headers["Referrer-Policy"]           = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"]        = "camera=(), microphone=(), geolocation=()"
+    # מסתיר את שם ה-server framework
+    response.headers["Server"]                    = "eden"
+    return response
 
 
 # ── Exception Handlers ───────────────────────────────────────────────
@@ -79,24 +96,27 @@ async def postgrest_error_handler(request: Request, exc: PostgrestAPIError):
     )
 
 
-# ── Routers ──────────────────────────────────────────────────────────
-app.include_router(clients.router,       prefix="/api")
-app.include_router(appointments.router,  prefix="/api")
-app.include_router(payments.router,      prefix="/api")
-app.include_router(photos.router,        prefix="/api")
-app.include_router(dashboard.router,     prefix="/api")
-app.include_router(notifications.router, prefix="/api")
+# ── Auth router (public — no token required) ─────────────────────────
+app.include_router(auth.router, prefix="/api")
+
+# ── Protected routers (require valid JWT) ────────────────────────────
+_auth = [Depends(require_admin)]
+
+app.include_router(clients.router,       prefix="/api", dependencies=_auth)
+app.include_router(appointments.router,  prefix="/api", dependencies=_auth)
+app.include_router(payments.router,      prefix="/api", dependencies=_auth)
+app.include_router(photos.router,        prefix="/api", dependencies=_auth)
+app.include_router(dashboard.router,     prefix="/api", dependencies=_auth)
+app.include_router(notifications.router, prefix="/api", dependencies=_auth)
+
+# ── Intake router (public — no token required) ────────────────────────
+app.include_router(intake.router, prefix="/api")
 
 
 # ── Root endpoints ────────────────────────────────────────────────────
 @app.get("/")
 def root():
-    return {
-        "app":         settings.APP_NAME,
-        "status":      "running",
-        "environment": settings.ENVIRONMENT,
-        "docs":        "/docs",
-    }
+    return {"status": "ok"}
 
 
 @app.get("/health")

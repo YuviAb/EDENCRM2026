@@ -33,12 +33,14 @@ const columns = [
   {
     title: 'טיפול',
     dataIndex: 'treatment_name',
+    responsive: ['sm'],
     render: (t) => <Text type="secondary">{t}</Text>,
   },
   {
     title: 'מחיר',
     dataIndex: 'price',
     width: 80,
+    responsive: ['sm'],
     render: (p) =>
       p != null
         ? <Text style={{ color: '#10b981' }}>₪{p}</Text>
@@ -47,7 +49,7 @@ const columns = [
   {
     title: 'סטטוס',
     dataIndex: 'status',
-    width: 110,
+    width: 95,
     render: (s) => {
       const { label, color } = STATUS_MAP[s] || { label: s, color: 'default' }
       return <Tag color={color}>{label}</Tag>
@@ -82,11 +84,11 @@ export default function DashboardPage() {
   return (
     <div>
       {/* Header */}
-      <div style={{ marginBottom: 28 }}>
-        <Title level={3} style={{ margin: 0, fontWeight: 400, color: '#1c1833' }}>
+      <div style={{ marginBottom: 20 }}>
+        <Title level={4} style={{ margin: 0, fontWeight: 400, color: '#1c1833' }}>
           {dayjs().format('dddd, D בMMMM')}
         </Title>
-        <Text style={{ color: '#a78bfa', fontSize: 13, fontWeight: 300, letterSpacing: 1 }}>
+        <Text style={{ color: '#a78bfa', fontSize: 12, fontWeight: 300, letterSpacing: 1 }}>
           EDEN COSMETICS — CRM
         </Text>
       </div>
@@ -180,6 +182,7 @@ export default function DashboardPage() {
             rowKey="id"
             pagination={false}
             size="small"
+            scroll={{ x: 'max-content' }}
           />
         )}
       </Card>

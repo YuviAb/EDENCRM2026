@@ -100,3 +100,44 @@ body {
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.2); border-radius: 4px; }
+
+/* ─── Mobile responsive ──────────────────────────────── */
+@media (max-width: 767px) {
+  /* Modals: never wider than screen */
+  .ant-modal {
+    max-width: calc(100vw - 24px) !important;
+    margin: 12px auto !important;
+  }
+  .ant-modal-content {
+    border-radius: 12px !important;
+  }
+
+  /* Tables: horizontal scroll */
+  .ant-table-wrapper {
+    overflow-x: auto;
+  }
+
+  /* Ant Design form items inside modal: smaller gap */
+  .ant-modal .ant-form-item {
+    margin-bottom: 14px !important;
+  }
+
+  /* Calendar: smaller font */
+  .ant-picker-calendar {
+    font-size: 12px;
+  }
+  .ant-picker-calendar .ant-picker-content th {
+    font-size: 11px;
+  }
+
+  /* Stat cards: no hover transform (tapping) */
+  .stat-card:hover {
+    transform: none !important;
+  }
+
+  /* Select & input: full width in filter bar */
+  .ant-select {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+}

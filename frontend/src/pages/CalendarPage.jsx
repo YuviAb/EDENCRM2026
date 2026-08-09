@@ -194,12 +194,14 @@ export default function CalendarPage() {
     {
       title: 'טיפול',
       dataIndex: 'treatment_name',
+      responsive: ['sm'],
       render: (t) => <Text type="secondary">{t}</Text>,
     },
     {
       title: 'מחיר',
       dataIndex: 'price',
       width: 75,
+      responsive: ['sm'],
       render: (p) =>
         p != null ? <Text style={{ color: '#10b981' }}>₪{p}</Text> : <Text type="secondary">—</Text>,
     },
@@ -242,8 +244,8 @@ export default function CalendarPage() {
   return (
     <div>
       {/* Page header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <Title level={3} style={{ margin: 0, fontWeight: 400, color: '#1c1833' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+        <Title level={4} style={{ margin: 0, fontWeight: 400, color: '#1c1833' }}>
           יומן תורים
         </Title>
         <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
@@ -319,6 +321,7 @@ export default function CalendarPage() {
               loading={isLoading}
               pagination={false}
               size="small"
+              scroll={{ x: 'max-content' }}
               locale={{
                 emptyText: `אין תורים ביום ${selectedDate.format('D/M/YYYY')}`,
               }}
@@ -337,7 +340,7 @@ export default function CalendarPage() {
         okText={editing ? 'שמור שינויים' : 'צור תור'}
         cancelText="ביטול"
         confirmLoading={saving}
-        width={540}
+        width="min(540px, 95vw)"
         destroyOnClose
       >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>

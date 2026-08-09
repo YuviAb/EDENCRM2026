@@ -179,8 +179,8 @@ export default function ClientsPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-        <Title level={3} style={{ margin: 0 }}>לקוחות</Title>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
+        <Title level={4} style={{ margin: 0 }}>לקוחות</Title>
         <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
           לקוחה חדשה
         </Button>
@@ -201,6 +201,7 @@ export default function ClientsPage() {
         loading={isLoading}
         pagination={{ pageSize: 20, showTotal: (t) => `סה"כ ${t} לקוחות` }}
         locale={{ emptyText: search ? 'לא נמצאו לקוחות' : 'אין עדיין לקוחות במערכת' }}
+        scroll={{ x: 'max-content' }}
       />
 
       <Modal
@@ -211,7 +212,7 @@ export default function ClientsPage() {
         okText={editing ? 'שמור שינויים' : 'הוסף לקוחה'}
         cancelText="ביטול"
         confirmLoading={saving}
-        width={600}
+        width="min(600px, 95vw)"
         destroyOnClose
       >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
