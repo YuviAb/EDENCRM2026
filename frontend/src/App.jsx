@@ -4,7 +4,8 @@ import LoginPage     from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import ClientsPage   from './pages/ClientsPage'
 import CalendarPage  from './pages/CalendarPage'
-import PaymentsPage  from './pages/PaymentsPage'
+import PaymentsPage      from './pages/PaymentsPage'
+import IntakeFormsPage  from './pages/IntakeFormsPage'
 import { authApi }   from './api/auth'
 
 function RequireAuth({ children }) {
@@ -31,6 +32,7 @@ function App() {
           <Route path="clients"   element={<ClientsPage />}   />
           <Route path="calendar"  element={<CalendarPage />}  />
           <Route path="payments"  element={<PaymentsPage />}  />
+          <Route path="intake"   element={<IntakeFormsPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

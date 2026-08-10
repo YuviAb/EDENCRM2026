@@ -3,7 +3,7 @@ import { ConfigProvider, Layout, Menu, Drawer, Button, Grid, Popconfirm } from '
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import {
   DashboardOutlined, TeamOutlined, CalendarOutlined,
-  DollarOutlined, MenuOutlined, LogoutOutlined,
+  DollarOutlined, MenuOutlined, LogoutOutlined, FileTextOutlined,
 } from '@ant-design/icons'
 import { authApi } from '../api/auth'
 
@@ -17,6 +17,7 @@ const menuItems = [
   { key: '/clients',  icon: <TeamOutlined />,      label: 'לקוחות'      },
   { key: '/calendar', icon: <CalendarOutlined />,  label: 'יומן תורים'  },
   { key: '/payments', icon: <DollarOutlined />,    label: 'תשלומים'     },
+  { key: '/intake',   icon: <FileTextOutlined />,  label: 'טפסי אנמנזה' },
 ]
 
 function LogoutButton() {
