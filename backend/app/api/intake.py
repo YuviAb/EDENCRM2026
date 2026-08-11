@@ -45,6 +45,30 @@ def get_pdf_url(form_id: str):
     sb = get_supabase_admin()
     form = sb.table("client_forms").select("pdf_path").eq("id", form_id).single().execute()
     if not form.data or not form.data.get("pdf_path"):
-        raise HTTPException(status_code=404, detail="PDF לא נמצא")
-    signed = sb.storage.from_("client-forms").create_signed_url(form.data["pdf_path"], 300)
-    return {"url": signed["signedURL"]}
+        raise HTTPException(status_code=404, detail="PDF לא נמצא לטופס זה")
+    try:
+        signed = sb.storage.from_("client-forms").create_signed_url(form.data["pdf_path"], 300)
+        url = signed.get("signedURL") or signed.get("signedUrl")
+        if not url:
+            raise HTTPException(status_code=404, detail="קובץ ה-PDF לא נמצא ב-Storage")
+        return {"url": url}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=f"קובץ ה-PDF לא נמצא: {e}")
+
+
+@router.delete("/forms/{form_id}", dependencies=[Depends(require_admin)])
+def delete_form(form_id: str):
+    sb = get_supabase_admin()
+    form = sb.table("client_forms").select("pdf_path").eq("id", form_id).single().execute()
+    if not form.data:
+        raise HTTPException(status_code=404, detail="טופס לא נמצא")
+    pdf_path = form.data.get("pdf_path")
+    if pdf_path:
+        try:
+            sb.storage.from_("client-forms").remove([pdf_path])
+        except Exception:
+            pass
+    sb.table("client_forms").delete().eq("id", form_id).execute()
+    return {"ok": True}

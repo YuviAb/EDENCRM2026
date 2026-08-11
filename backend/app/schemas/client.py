@@ -36,8 +36,17 @@ class ClientUpdate(BaseModel):
     is_active: Optional[bool] = None
 
 
-class ClientOut(ClientBase):
+class ClientOut(BaseModel):
     id: str
+    full_name: str
+    phone: Optional[str] = None
+    email: Optional[EmailStr] = None
+    date_of_birth: Optional[date] = None
+    skin_type: Optional[str] = None
+    allergies: Optional[str] = None
+    medical_notes: Optional[str] = None
+    referral_source: Optional[str] = None
+    general_notes: Optional[str] = None
     is_active: bool = True
     created_at: datetime
     updated_at: datetime

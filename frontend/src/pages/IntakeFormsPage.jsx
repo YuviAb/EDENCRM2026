@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { Table, Button, Tag, Typography, Modal, Descriptions, message } from 'antd'
-import { FileTextOutlined, EyeOutlined } from '@ant-design/icons'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { Table, Button, Tag, Typography, Modal, Descriptions, message, Popconfirm } from 'antd'
+import { FileTextOutlined, EyeOutlined, DeleteOutlined } from '@ant-design/icons'
 import { apiClient } from '../api/client'
 import dayjs from 'dayjs'
 
@@ -20,11 +20,26 @@ async function fetchPdfUrl(formId) {
 export default function IntakeFormsPage() {
   const [detailForm, setDetailForm] = useState(null)
   const [pdfLoading, setPdfLoading] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const qc = useQueryClient()
 
   const { data: forms = [], isLoading } = useQuery({
     queryKey: ['intake-forms'],
     queryFn: fetchForms,
   })
+
+  const deleteForm = async (formId) => {
+    setDeleting(formId)
+    try {
+      await apiClient.delete(`/intake/forms/${formId}`)
+      message.success('הטופס נמחק')
+      qc.invalidateQueries({ queryKey: ['intake-forms'] })
+    } catch {
+      message.error('שגיאה במחיקה')
+    } finally {
+      setDeleting(false)
+    }
+  }
 
   const openPdf = async (formId) => {
     setPdfLoading(formId)
@@ -78,6 +93,15 @@ export default function IntakeFormsPage() {
               PDF
             </Button>
           )}
+          <Popconfirm
+            title="למחוק את הטופס?"
+            okText="מחק"
+            cancelText="ביטול"
+            okButtonProps={{ danger: true }}
+            onConfirm={() => deleteForm(r.id)}
+          >
+            <Button size="small" danger icon={<DeleteOutlined />} loading={deleting === r.id} />
+          </Popconfirm>
         </div>
       ),
     },
