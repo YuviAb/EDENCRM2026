@@ -12,7 +12,7 @@ from postgrest.exceptions import APIError as PostgrestAPIError
 
 from app.core.config import settings
 from app.core.deps import require_admin
-from app.api import clients, appointments, payments, photos, dashboard, notifications, auth, intake
+from app.api import clients, appointments, payments, photos, dashboard, notifications, auth, intake, client_profile
 
 
 # ── Scheduler (APScheduler) ──────────────────────────────────────────
@@ -107,7 +107,8 @@ app.include_router(appointments.router,  prefix="/api", dependencies=_auth)
 app.include_router(payments.router,      prefix="/api", dependencies=_auth)
 app.include_router(photos.router,        prefix="/api", dependencies=_auth)
 app.include_router(dashboard.router,     prefix="/api", dependencies=_auth)
-app.include_router(notifications.router, prefix="/api", dependencies=_auth)
+app.include_router(notifications.router,   prefix="/api", dependencies=_auth)
+app.include_router(client_profile.router, prefix="/api", dependencies=_auth)
 
 # ── Intake router (public — no token required) ────────────────────────
 app.include_router(intake.router, prefix="/api")

@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import {
   Table, Button, Modal, Form, Input, Select, DatePicker,
   Tag, Space, Typography, Popconfirm, message, Tooltip,
 } from 'antd'
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { PlusOutlined, EditOutlined, DeleteOutlined, FolderOpenOutlined } from '@ant-design/icons'
 import { clientsApi } from '../api/clients'
 import dayjs from 'dayjs'
 
@@ -21,6 +22,7 @@ export default function ClientsPage() {
   const [saving, setSaving] = useState(false)
   const [form] = Form.useForm()
   const qc = useQueryClient()
+  const navigate = useNavigate()
 
   const { data: clients = [], isLoading } = useQuery({
     queryKey: ['clients', search],
@@ -66,12 +68,15 @@ export default function ClientsPage() {
       if (editing) {
         await clientsApi.update(editing.id, payload)
         message.success('הפרטים עודכנו')
+        qc.invalidateQueries({ queryKey: ['clients'] })
+        closeModal()
       } else {
-        await clientsApi.create(payload)
+        const newClient = await clientsApi.create(payload)
         message.success('לקוחה נוספה בהצלחה')
+        qc.invalidateQueries({ queryKey: ['clients'] })
+        closeModal()
+        navigate(`/clients/${newClient.id}`)
       }
-      qc.invalidateQueries({ queryKey: ['clients'] })
-      closeModal()
     } catch (err) {
       if (err?.errorFields) return  // validation error - form handles display
       message.error(err.message || 'שגיאה בשמירה')
@@ -117,11 +122,9 @@ export default function ClientsPage() {
       sorter: (a, b) => a.full_name.localeCompare(b.full_name),
       render: (name, record) => (
         <span>
-          <strong>{name}</strong>
+          <a onClick={() => navigate(`/clients/${record.id}`)} style={{ fontWeight: 600 }}>{name}</a>
           {!record.is_active && (
-            <Tag color="red" style={{ marginRight: 8 }}>
-              לא פעיל
-            </Tag>
+            <Tag color="red" style={{ marginRight: 8 }}>לא פעיל</Tag>
           )}
         </span>
       ),
@@ -150,9 +153,16 @@ export default function ClientsPage() {
     {
       title: 'פעולות',
       key: 'actions',
-      width: 100,
+      width: 130,
       render: (_, record) => (
         <Space>
+          <Tooltip title="תיק לקוח">
+            <Button
+              size="small"
+              icon={<FolderOpenOutlined />}
+              onClick={() => navigate(`/clients/${record.id}`)}
+            />
+          </Tooltip>
           <Tooltip title="עריכה">
             <Button
               size="small"

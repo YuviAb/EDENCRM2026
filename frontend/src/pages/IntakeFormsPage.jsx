@@ -43,10 +43,14 @@ export default function IntakeFormsPage() {
 
   const openPdf = async (formId) => {
     setPdfLoading(formId)
+    const newWindow = window.open('', '_blank')
     try {
       const url = await fetchPdfUrl(formId)
-      window.open(url, '_blank')
+      if (newWindow) {
+        newWindow.location.href = url
+      }
     } catch {
+      if (newWindow) newWindow.close()
       message.error('לא ניתן לטעון את ה-PDF')
     } finally {
       setPdfLoading(false)
